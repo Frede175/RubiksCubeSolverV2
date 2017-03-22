@@ -2,8 +2,21 @@
 #ifndef Cube_H
 #define Cube_H
 
+#include "Helper.h"
+
 class Cube {
 	unsigned char cube[48];
+
+	const unsigned char cornerIndexs[8][3] = {
+		{16, 10, 5}, //UFL
+		{18, 24, 7}, //UFR
+		{34, 8, 0}, //UBL
+		{32, 26, 2}, //UBR
+		{21, 15, 40}, //DFL
+		{23, 29, 42}, //DFR
+		{39, 13, 45}, //DBL
+		{37, 31, 47} //DBR
+	};
 
 	/*
              00  01  02
@@ -21,8 +34,31 @@ class Cube {
 
 	Cube(unsigned char cube[54]);
 
+
+
+
 	void doMove(unsigned char move);
 	bool isSolved();
+
+
+	/*
+	
+		if white or yellow is face front or back corner orientation is: 0
+		if white or yellow is face left or right corner orientation is: 1
+		if white or yellow is face up or down corner orientation is:	2
+	
+		This returns an index from all the corners between 0 and 3^(8-1) - 1
+	*/
+	int getCornerIndex();
+
+	/*
+		if ()
+
+	*/
+	int getEdgeIndex();
+
+private:
+	unsigned char getCornerPos(unsigned char index);
 
 
 };
