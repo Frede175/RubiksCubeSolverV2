@@ -7,6 +7,12 @@ Cube::Cube(unsigned char cube[54]) {
 	}
 }
 
+Cube::Cube(const unsigned char cube[54]) {
+	for (int i = 0; i < 54; i++) {
+		this->cube[i] = cube[i];
+	}
+}
+
 /*
 			 00  01  02
 			 03  U   04
@@ -210,67 +216,145 @@ void Cube::doMove(unsigned char move) {
 */
 
 bool Cube::isSolved() {
-	for (int side = 0; side < 54; side += 9) {
-		unsigned char color = this->cube[side];
-		for (int i = side; i < side + 9; i++) {
-			if (color != this->cube[i]) return false;
-		}
+	for (int i = 0; i < 48; i++) {
+		if (cube[i] != solvedCube_T[i]) return false;
 	}
 	return true;
 }
 
-int Cube::getCornerIndex()
+long int Cube::getCornerIndex()
 {
-	unsigned char or[8];
+	unsigned char pm[8] = {0,0,0,0,0,0,0,0};
+
+	for (int i = 0; i < 8; i++) {
+		pm[i] = getCornerPos(i);
+	}
+
+	int tp = 0;
+	for (int i = 0; i < 8 - 2; i++) {
+		tp *= (8 - i + 1);
+		for (int j = i + 1; j < 8; j++) {
+			if (pm[i] > pm[j]) tp += 1;
+		}
+	}
+
+
+	unsigned char or [8] = {0,0,0,0,0,0,0,0};
 	for (int i = 0; i < 8; i++) {
 		for (int j = 0; j < 3; j++) {
-			if (cornerIndexs[i][j] == RubikColor_T::WHITE || cornerIndexs[i][j] == RubikColor_T::ORANGE) {
+			if (cube[cornerIndexs[i][j]] == RubikColor_T::WHITE || cube[cornerIndexs[i][j]] == RubikColor_T::YELLOW) { //Changed ogange to yellow
 				or[i] = j;
 				break;
 			}
 		}
 	}
-	int t = 0;
+	int to = 0;
 	for (int i = 0; i < 8-1; i++) {
-		t = t * 3;
-		t = t + or[i];
+		to *= 3;
+		to += or[i];
+		std::cout << "to: " << to << ", i: " << i << " or[i]: " << unsigned(or[i]) << "\n";
 	}
-	return t;
+	//Combine two number to a new index:
+
+	std::cout << "TP: " << tp << ", TO: " << to << "\n";
+
+	//return ((tp + to)*(tp + to + 1))/2 + to;
+	return 2186 * tp + to;
 }
 
 int Cube::getEdgeIndex()
 {
-	return 0;
+
+	unsigned char pm[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
+
+	for (int i = 0; i < 12; i++) {
+		pm[i] = getCornerPos(i);
+	}
+
+	int tp = 0;
+	for (int i = 0; i < 12 - 2; i++) {
+		tp *= (12 - i + 1);
+		for (int j = i + 1; j < 12; j++) {
+			if (pm[i] > pm[j]) tp += 1;
+		}
+	}
+
+
+	unsigned char or [12];
+	for (int i = 0; i < 12; i++) {
+		if (i < 12 - 4) {
+			if (cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) or[i] = 0; else or[i] = 1;
+		} else {
+			if (cube[edgeIndexs[i][0]] == RubikColor_T::BLUE || cube[edgeIndexs[i][0]] == RubikColor_T::GREEN) or[i] = 0; else or[i] = 1;
+		}
+	}
+	int to = 0;
+	for (int i = 0; i < 12 - 1; i++) {
+		to = to * 2;
+		to = to + or [i];
+	}
+	return 2047 * tp + to;
 }
 
 unsigned char Cube::getCornerPos(unsigned char index)
 {
 
-	if ((cornerIndexs[index][0] == RubikColor_T::WHITE || cornerIndexs[index][0] == RubikColor_T::ORANGE || cornerIndexs[index][0] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][1] == RubikColor_T::WHITE || cornerIndexs[index][1] == RubikColor_T::ORANGE || cornerIndexs[index][1] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][2] == RubikColor_T::WHITE || cornerIndexs[index][2] == RubikColor_T::ORANGE || cornerIndexs[index][2] == RubikColor_T::BLUE)) return 0;
-	else if ((cornerIndexs[index][0] == RubikColor_T::WHITE || cornerIndexs[index][0] == RubikColor_T::RED || cornerIndexs[index][0] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][1] == RubikColor_T::WHITE || cornerIndexs[index][1] == RubikColor_T::RED || cornerIndexs[index][1] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][2] == RubikColor_T::WHITE || cornerIndexs[index][2] == RubikColor_T::RED || cornerIndexs[index][2] == RubikColor_T::BLUE)) return 1;
-	else if ((cornerIndexs[index][0] == RubikColor_T::YELLOW || cornerIndexs[index][0] == RubikColor_T::ORANGE || cornerIndexs[index][0] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][1] == RubikColor_T::YELLOW || cornerIndexs[index][1] == RubikColor_T::ORANGE || cornerIndexs[index][1] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][2] == RubikColor_T::YELLOW || cornerIndexs[index][2] == RubikColor_T::ORANGE || cornerIndexs[index][2] == RubikColor_T::BLUE)) return 2;
-	else if ((cornerIndexs[index][0] == RubikColor_T::YELLOW || cornerIndexs[index][0] == RubikColor_T::RED || cornerIndexs[index][0] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][1] == RubikColor_T::YELLOW || cornerIndexs[index][1] == RubikColor_T::RED || cornerIndexs[index][1] == RubikColor_T::BLUE) &&
-		(cornerIndexs[index][2] == RubikColor_T::YELLOW || cornerIndexs[index][2] == RubikColor_T::RED || cornerIndexs[index][2] == RubikColor_T::BLUE)) return 3;
-	else if ((cornerIndexs[index][0] == RubikColor_T::WHITE || cornerIndexs[index][0] == RubikColor_T::ORANGE || cornerIndexs[index][0] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][1] == RubikColor_T::WHITE || cornerIndexs[index][1] == RubikColor_T::ORANGE || cornerIndexs[index][1] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][2] == RubikColor_T::WHITE || cornerIndexs[index][2] == RubikColor_T::ORANGE || cornerIndexs[index][2] == RubikColor_T::GREEN)) return 4;
-	else if ((cornerIndexs[index][0] == RubikColor_T::WHITE || cornerIndexs[index][0] == RubikColor_T::RED || cornerIndexs[index][0] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][1] == RubikColor_T::WHITE || cornerIndexs[index][1] == RubikColor_T::RED || cornerIndexs[index][1] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][2] == RubikColor_T::WHITE || cornerIndexs[index][2] == RubikColor_T::RED || cornerIndexs[index][2] == RubikColor_T::GREEN)) return 5;
-	else if ((cornerIndexs[index][0] == RubikColor_T::YELLOW || cornerIndexs[index][0] == RubikColor_T::ORANGE || cornerIndexs[index][0] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][1] == RubikColor_T::YELLOW || cornerIndexs[index][1] == RubikColor_T::ORANGE || cornerIndexs[index][1] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][2] == RubikColor_T::YELLOW || cornerIndexs[index][2] == RubikColor_T::ORANGE || cornerIndexs[index][2] == RubikColor_T::GREEN)) return 6;
-	else if ((cornerIndexs[index][0] == RubikColor_T::YELLOW || cornerIndexs[index][0] == RubikColor_T::RED || cornerIndexs[index][0] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][1] == RubikColor_T::YELLOW || cornerIndexs[index][1] == RubikColor_T::RED || cornerIndexs[index][1] == RubikColor_T::GREEN) &&
-		(cornerIndexs[index][2] == RubikColor_T::YELLOW || cornerIndexs[index][2] == RubikColor_T::RED || cornerIndexs[index][2] == RubikColor_T::GREEN)) return 7;
+	if ((cube[cornerIndexs[index][0]] == RubikColor_T::WHITE || cube[cornerIndexs[index][0]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::WHITE || cube[cornerIndexs[index][1]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][1]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::WHITE || cube[cornerIndexs[index][2]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][2]] == RubikColor_T::BLUE)) return 0;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::WHITE || cube[cornerIndexs[index][0]] == RubikColor_T::RED || cube[cornerIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::WHITE || cube[cornerIndexs[index][1]] == RubikColor_T::RED || cube[cornerIndexs[index][1]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::WHITE || cube[cornerIndexs[index][2]] == RubikColor_T::RED || cube[cornerIndexs[index][2]] == RubikColor_T::BLUE)) return 1;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][0]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][1]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][1]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][2]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][2]] == RubikColor_T::BLUE)) return 2;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][0]] == RubikColor_T::RED || cube[cornerIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][1]] == RubikColor_T::RED || cube[cornerIndexs[index][1]] == RubikColor_T::BLUE) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][2]] == RubikColor_T::RED || cube[cornerIndexs[index][2]] == RubikColor_T::BLUE)) return 3;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::WHITE || cube[cornerIndexs[index][0]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::WHITE || cube[cornerIndexs[index][1]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][1]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::WHITE || cube[cornerIndexs[index][2]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][2]] == RubikColor_T::GREEN)) return 4;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::WHITE || cube[cornerIndexs[index][0]] == RubikColor_T::RED || cube[cornerIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::WHITE || cube[cornerIndexs[index][1]] == RubikColor_T::RED || cube[cornerIndexs[index][1]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::WHITE || cube[cornerIndexs[index][2]] == RubikColor_T::RED || cube[cornerIndexs[index][2]] == RubikColor_T::GREEN)) return 5;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][0]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][1]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][1]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][2]] == RubikColor_T::ORANGE || cube[cornerIndexs[index][2]] == RubikColor_T::GREEN)) return 6;
+	else if ((cube[cornerIndexs[index][0]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][0]] == RubikColor_T::RED || cube[cornerIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][1]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][1]] == RubikColor_T::RED || cube[cornerIndexs[index][1]] == RubikColor_T::GREEN) &&
+		(cube[cornerIndexs[index][2]] == RubikColor_T::YELLOW || cube[cornerIndexs[index][2]] == RubikColor_T::RED || cube[cornerIndexs[index][2]] == RubikColor_T::GREEN)) return 7;
 
+
+	return -1;
+}
+
+unsigned char Cube::getEdgePos(unsigned char index)
+{
+
+	if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 0;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 1;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 2;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 3;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 4;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 5;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 6;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 7;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::RED || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::RED || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 8;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 9;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 10;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::GREEN || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::GREEN || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 11;
 
 	return -1;
 }

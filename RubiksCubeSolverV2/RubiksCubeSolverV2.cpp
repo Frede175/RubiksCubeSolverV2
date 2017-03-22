@@ -3,10 +3,12 @@
 
 #include "stdafx.h"
 #include "Helper.h"
+#include "Cube.h"
 
 int main()
 {
-	std::cout << moves[10];
+	Cube cube(solvedCube_T);
+	std::cout << unsigned(cube.getCornerIndex());
     return 0;
 }
 

@@ -14,6 +14,17 @@ typedef enum {
 } RubikColor_T;
 
 
+const unsigned char solvedCube_T[48] = {
+	RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::BLUE,
+	RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::ORANGE,
+	RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::WHITE,
+	RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::RED,
+	RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::YELLOW,
+	RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN, RubikColor_T::GREEN
+};
+
+
+
 namespace Helper {
 	
 };
