@@ -36,15 +36,24 @@ public:
 	
 		Permutation.
 
-		value range from 0 to 44069760
+		value range from 0 to 8! * 3^7 (88179840)
 	*/
-	long int getCornerIndex();
+	int getCornerIndex();
 
 	/*
+		Index: 0 for first table.
+			   1 for second table.
+
 		if 
-		value range from 0 to 490258137600
+		value range from 0 to 42577920 
+
 	*/
-	int getEdgeIndex();
+	int getEdgeIndex(int index);
+
+	/*
+		Return an array of available moves given a last move
+	*/
+	const unsigned char * getAvailableMoves(unsigned char lastMove);
 
 private:
 	unsigned char getCornerPos(unsigned char index);
@@ -76,6 +85,16 @@ private:
 		{ 4, 25 }, //Blue or green
 		{ 3, 9 }, //Blue or green
 		{ 43, 14 }  //Blue or green
+	};
+
+	const unsigned char availableMoves[7][18] = {
+		{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
+		{ 0, 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
+		{ 0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 12, 13, 14, 15, 16, 17 },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17 },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 },
+		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 }
 	};
 
 };

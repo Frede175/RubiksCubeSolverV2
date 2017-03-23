@@ -4,11 +4,25 @@
 #include "stdafx.h"
 #include "Helper.h"
 #include "Cube.h"
+#include "Tables.h"
 
 int main()
 {
+
 	Cube cube(solvedCube_T);
-	std::cout << unsigned(cube.getCornerIndex());
-    return 0;
+	const unsigned char * a = cube.getAvailableMoves(255);
+	for (int i = 0; i < 18; i++)
+	{
+		Cube newCube(cube);
+		newCube.doMove(a[i]);
+		if (newCube.getCornerIndex() > 88179840) {
+			std::cout << newCube.getCornerIndex() << "\n";
+		}
+	}
+
+	//unsigned char * table;
+	//table = NEW_CORNER_TABLE;
+
+	//GenerateCornerTable(table);	
 }
 

@@ -222,7 +222,7 @@ bool Cube::isSolved() {
 	return true;
 }
 
-long int Cube::getCornerIndex()
+int Cube::getCornerIndex()
 {
 	unsigned char pm[8] = {0,0,0,0,0,0,0,0};
 
@@ -231,11 +231,15 @@ long int Cube::getCornerIndex()
 	}
 
 	int tp = 0;
-	for (int i = 0; i < 8 - 2; i++) {
+	for (int i = 0; i < 8 - 1; i++) {
 		tp *= (8 - i + 1);
 		for (int j = i + 1; j < 8; j++) {
 			if (pm[i] > pm[j]) tp += 1;
 		}
+	}
+
+	if (tp > 40320) {
+		std::cout << "Something went wrong: " << tp << "\n";
 	}
 
 
@@ -252,48 +256,79 @@ long int Cube::getCornerIndex()
 	for (int i = 0; i < 8-1; i++) {
 		to *= 3;
 		to += or[i];
-		std::cout << "to: " << to << ", i: " << i << " or[i]: " << unsigned(or[i]) << "\n";
+		
 	}
-	//Combine two number to a new index:
 
-	std::cout << "TP: " << tp << ", TO: " << to << "\n";
-
-	//return ((tp + to)*(tp + to + 1))/2 + to;
-	return 2186 * tp + to;
+	//std::cout << "to: " << to << ", tp " << tp << " result: " << 2187 * tp + to;
+	return 2187 * tp + to;
 }
 
-int Cube::getEdgeIndex()
+int Cube::getEdgeIndex(int table)
 {
+	
+	unsigned char pm[6] = { 0,0,0,0,0,0 };
 
-	unsigned char pm[12] = { 0,0,0,0,0,0,0,0,0,0,0,0 };
-
-	for (int i = 0; i < 12; i++) {
+	for (int i = 0 + 6 * table; i < 6 + 6 * table; i++) {
 		pm[i] = getCornerPos(i);
 	}
 
 	int tp = 0;
-	for (int i = 0; i < 12 - 2; i++) {
+	for (int i = 0 + 6 * table; i < 6 - 2 + 6 * table; i++) {
 		tp *= (12 - i + 1);
-		for (int j = i + 1; j < 12; j++) {
+		for (int j = i + 1; j < 6 + 6 * table; j++) {
 			if (pm[i] > pm[j]) tp += 1;
 		}
 	}
 
 
-	unsigned char or [12];
-	for (int i = 0; i < 12; i++) {
-		if (i < 12 - 4) {
+	unsigned char or [6];
+	for (int i = 0 + 6 * table; i < 6 + 6 * table; i++) {
+		if (i < 11 - 4) {
 			if (cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) or[i] = 0; else or[i] = 1;
 		} else {
 			if (cube[edgeIndexs[i][0]] == RubikColor_T::BLUE || cube[edgeIndexs[i][0]] == RubikColor_T::GREEN) or[i] = 0; else or[i] = 1;
 		}
 	}
 	int to = 0;
-	for (int i = 0; i < 12 - 1; i++) {
+	for (int i = 0 + 6 * table; i < 6 - 1 + 6 * table; i++) {
 		to = to * 2;
 		to = to + or [i];
 	}
-	return 2047 * tp + to;
+	return 64 * tp + to;
+}
+
+const unsigned char * Cube::getAvailableMoves(unsigned char lastMove)  {
+	switch (lastMove)
+	{
+	case 0:
+	case 1:
+	case 2:
+		return availableMoves[0];
+	case 3:
+	case 4:
+	case 5:
+		return availableMoves[1];
+	case 6:
+	case 7:
+	case 8:
+		return availableMoves[2];
+	case 9:
+	case 10:
+	case 11:
+		return availableMoves[3];
+	case 12:
+	case 13:
+	case 14:
+		return availableMoves[4];
+	case 15:
+	case 16:
+	case 17:
+		return availableMoves[5];
+	default:
+		return availableMoves[6];
+	}
+
+	return nullptr;
 }
 
 unsigned char Cube::getCornerPos(unsigned char index)
