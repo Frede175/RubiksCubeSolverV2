@@ -232,7 +232,7 @@ int Cube::getCornerIndex()
 
 	int tp = 0;
 	for (int i = 0; i < 8 - 1; i++) {
-		tp *= (8 - i + 1);
+		tp *= (8 - i);
 		for (int j = i + 1; j < 8; j++) {
 			if (pm[i] > pm[j]) tp += 1;
 		}
@@ -260,7 +260,7 @@ int Cube::getCornerIndex()
 	}
 
 	//std::cout << "to: " << to << ", tp " << tp << " result: " << 2187 * tp + to;
-	return 2187 * tp + to;
+	return 2186 * tp + to;
 }
 
 int Cube::getEdgeIndex(int table)
@@ -274,7 +274,7 @@ int Cube::getEdgeIndex(int table)
 
 	int tp = 0;
 	for (int i = 0 + 6 * table; i < 6 - 2 + 6 * table; i++) {
-		tp *= (12 - i + 1);
+		tp *= (12 - i);
 		for (int j = i + 1; j < 6 + 6 * table; j++) {
 			if (pm[i] > pm[j]) tp += 1;
 		}

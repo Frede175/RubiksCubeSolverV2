@@ -8,8 +8,8 @@
 
 int main()
 {
-
-	Cube cube(solvedCube_T);
+	/*
+	//Cube cube(solvedCube_T);
 	const unsigned char * a = cube.getAvailableMoves(255);
 	for (int i = 0; i < 18; i++)
 	{
@@ -19,10 +19,17 @@ int main()
 			std::cout << newCube.getCornerIndex() << "\n";
 		}
 	}
+	*/
+	unsigned char * table;
+	table = NEW_CORNER_TABLE;
 
-	//unsigned char * table;
-	//table = NEW_CORNER_TABLE;
+	GenerateCornerTable(table);	
 
-	//GenerateCornerTable(table);	
+
+	FILE * file = fopen("output.txt", "w+");
+	int bytes_written = fwrite(table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
+	fclose(file);
+	free(table);
+
 }
 
