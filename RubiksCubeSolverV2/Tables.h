@@ -27,7 +27,7 @@ namespace Tables {
 
 
 bool GenerateCornerTable(unsigned char * table);
-bool GenerateEdgeTable();
+bool GenerateEdgeTable(unsigned char * table1, unsigned char * table2);
 
 
 #endif // !Tables_H

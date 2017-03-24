@@ -228,16 +228,17 @@ int Cube::getCornerIndex()
 
 	for (int i = 0; i < 8; i++) {
 		pm[i] = getCornerPos(i);
+		//std::cout << "permutation " << i << ":" << unsigned(pm[i]) << "\n";
 	}
 
 	int tp = 0;
 	for (int i = 0; i < 8 - 1; i++) {
 		tp *= (8 - i);
 		for (int j = i + 1; j < 8; j++) {
-			if (pm[i] > pm[j]) tp += 1;
+			if (pm[i] > pm[j]) tp++;
 		}
 	}
-
+	//std::cout << "tp: " << tp << "\n";
 	if (tp > 40320) {
 		std::cout << "Something went wrong: " << tp << "\n";
 	}
@@ -258,9 +259,9 @@ int Cube::getCornerIndex()
 		to += or[i];
 		
 	}
-
+	 
 	//std::cout << "to: " << to << ", tp " << tp << " result: " << 2187 * tp + to;
-	return 2186 * tp + to;
+	return 2187 * tp + to;
 }
 
 int Cube::getEdgeIndex(int table)
@@ -269,30 +270,34 @@ int Cube::getEdgeIndex(int table)
 	unsigned char pm[6] = { 0,0,0,0,0,0 };
 
 	for (int i = 0 + 6 * table; i < 6 + 6 * table; i++) {
-		pm[i] = getCornerPos(i);
+		pm[i - 6 * table] = getEdgePos(i);
 	}
 
 	int tp = 0;
 	for (int i = 0 + 6 * table; i < 6 - 2 + 6 * table; i++) {
-		tp *= (12 - i);
+		tp *= (12 - i - 6 * table);
 		for (int j = i + 1; j < 6 + 6 * table; j++) {
-			if (pm[i] > pm[j]) tp += 1;
+			if (pm[i - 6 * table] > pm[j - 6 * table]) tp++;
 		}
+	}
+
+	if (tp > 665280) {
+		std::cout << "Something went wrong (tp): " << tp << "\n";
 	}
 
 
 	unsigned char or [6];
 	for (int i = 0 + 6 * table; i < 6 + 6 * table; i++) {
 		if (i < 11 - 4) {
-			if (cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) or[i] = 0; else or[i] = 1;
+			if (cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) or[i - 6 * table] = 0; else or[i - 6 * table] = 1;
 		} else {
-			if (cube[edgeIndexs[i][0]] == RubikColor_T::BLUE || cube[edgeIndexs[i][0]] == RubikColor_T::GREEN) or[i] = 0; else or[i] = 1;
+			if (cube[edgeIndexs[i][0]] == RubikColor_T::BLUE || cube[edgeIndexs[i][0]] == RubikColor_T::GREEN) or[i - 6 * table] = 0; else or[i - 6 * table] = 1;
 		}
 	}
 	int to = 0;
 	for (int i = 0 + 6 * table; i < 6 - 1 + 6 * table; i++) {
 		to = to * 2;
-		to = to + or [i];
+		to = to + or [i - 6 * table];
 	}
 	return 64 * tp + to;
 }

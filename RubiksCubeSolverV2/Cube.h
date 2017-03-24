@@ -44,7 +44,7 @@ public:
 		Index: 0 for first table.
 			   1 for second table.
 
-		if 
+		
 		value range from 0 to 42577920 
 
 	*/
@@ -55,11 +55,11 @@ public:
 	*/
 	const unsigned char * getAvailableMoves(unsigned char lastMove);
 
-private:
+//private:
 	unsigned char getCornerPos(unsigned char index);
 	unsigned char getEdgePos(unsigned char index);
 
-	const unsigned char cornerIndexs[8][3] = {
+	static constexpr unsigned char cornerIndexs[8][3] = {
 		{ 16, 10, 5 }, //UFL
 		{ 18, 24, 7 }, //UFR
 		{ 34, 8, 0 }, //UBL
@@ -72,7 +72,7 @@ private:
 
 
 	//Front/back first. if not front/back then top/down first
-	const unsigned char edgeIndexs[12][2] = {
+	static constexpr unsigned char edgeIndexs[12][2] = {
 		{ 17, 6 }, //White or yellow 
 		{ 19, 12 }, //White or yellow
 		{ 22, 41 }, //White or yellow
