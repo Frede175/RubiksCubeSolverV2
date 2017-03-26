@@ -21,12 +21,20 @@ public:
 			 43  DG  44
 			 45  46  47
 	*/
-
-	Cube(unsigned char cube[54]);
-	Cube(const unsigned char cube[54]);
+	Cube() {}
+	Cube(unsigned char cube[48]);
+	Cube(const unsigned char cube[48]);
 
 	void doMove(unsigned char move);
 	bool isSolved();
+
+	/*
+	 *	Is reached if:
+	 *	All the corners are oriented
+	 *	All the edges are oriented
+	 *	All the middle layer edges are already in the middle layer
+	 */
+	bool subgoal();
 
 	/*
 	
@@ -48,14 +56,23 @@ public:
 		value range from 0 to 42577920 
 
 	*/
-	int getEdgeIndex(int index);
+	int getEdgeIndex(int table);
+
+
+	
+
+
 
 	/*
 		Return an array of available moves given a last move
 	*/
 	const unsigned char * getAvailableMoves(unsigned char lastMove);
+	const unsigned char * getAvailableMovesInPhase2(unsigned char lastMove);
 
-//private:
+	bool endsOnCurrectMove(unsigned char lastMove);
+
+
+private:
 	unsigned char getCornerPos(unsigned char index);
 	unsigned char getEdgePos(unsigned char index);
 
@@ -73,21 +90,21 @@ public:
 
 	//Front/back first. if not front/back then top/down first
 	static constexpr unsigned char edgeIndexs[12][2] = {
-		{ 17, 6 }, //White or yellow 
-		{ 19, 12 }, //White or yellow
-		{ 22, 41 }, //White or yellow
-		{ 20, 27 }, //White or yellow
-		{ 35, 28 }, //White or yellow
-		{ 33, 1 }, //White or yellow
-		{ 36, 11 }, //White or yellow
-		{ 38, 46 }, //White or yellow
-		{ 44, 30 }, //Blue or green
-		{ 4, 25 }, //Blue or green
-		{ 3, 9 }, //Blue or green
-		{ 43, 14 }  //Blue or green
+		{ 1, 33 }, //UB  
+		{ 3, 9 }, //UL
+		{ 6, 17 }, //UF
+		{ 4, 25 }, //UR
+		{ 41, 22 }, //DF
+		{ 43, 14 }, //DL
+		{ 46, 38 }, //DB
+		{ 44, 30 }, //DR
+		{ 20, 27 }, //FR
+		{ 19, 12 }, //FL
+		{ 35, 28 },//BR
+		{ 36, 11 } //BL
 	};
 
-	const unsigned char availableMoves[7][18] = {
+	static constexpr unsigned char availableMoves[7][18] = {
 		{ 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
 		{ 0, 1, 2, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
 		{ 0, 1, 2, 3, 4, 5, 9, 10, 11, 12, 13, 14, 15, 16, 17 },
@@ -95,6 +112,24 @@ public:
 		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 15, 16, 17 },
 		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14 },
 		{ 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17 }
+	};
+
+	static constexpr unsigned char middelLayerEdges[4] = { 8,9,10,11 };
+
+
+	static constexpr unsigned char currectEndMoves[8] = { 0,2,3,5,6,8,9,11 };
+
+
+	static constexpr unsigned char availableMovesInPhase2[7][10] = {
+		{ 15,16,17,1,4,7,10 },
+		{ 12,13,14,1,4,7,10 },
+		{ 12,13,14,15,16,17,4,7,10 },
+		{ 12,13,14,15,16,17,1,7,10 },
+		{ 12,13,14,15,16,17,1,4,10 },
+		{ 12,13,14,15,16,17,1,4,7 },
+		{ 12,13,14,15,16,17,1,4,7,10 },
+
+
 	};
 
 };

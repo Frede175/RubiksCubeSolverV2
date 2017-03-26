@@ -5,9 +5,23 @@
 #include "Helper.h"
 #include "Cube.h"
 #include "Tables.h"
+#include "Solver.h"
 
 int main()
 {
+	unsigned char c[48] = {
+		RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::ORANGE,
+		RubikColor_T::GREEN, RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::ORANGE, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::YELLOW,
+		RubikColor_T::ORANGE, RubikColor_T::BLUE, RubikColor_T::GREEN, RubikColor_T::WHITE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::GREEN, RubikColor_T::RED,
+		RubikColor_T::WHITE, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::YELLOW,
+		RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::ORANGE, RubikColor_T::GREEN,
+		RubikColor_T::GREEN, RubikColor_T::WHITE, RubikColor_T::BLUE, RubikColor_T::WHITE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::GREEN, RubikColor_T::BLUE
+	};
+	//Cube cube(solvedCube_T);
+	
+
+	//cube.doMove(12);
+	//std::cout << "Index: " << cube.getEdgeIndex(0) << " index: " << cube.getEdgeIndex(1) << "\n";
 	/*
 	//Cube cube(solvedCube_T);
 	const unsigned char * a = cube.getAvailableMoves(255);
@@ -20,39 +34,131 @@ int main()
 		}
 	}
 	*/
+
 	/*
-	unsigned char * table1;
-	table1 = NEW_EGDE_TABLE;
-	unsigned char * table2;
-	table2 = NEW_EGDE_TABLE;
+	unsigned char * table;
+	table = NEW_CORNER_TABLE;
 
-	GenerateEdgeTable(table1, table2);
+	GenerateCornerTable(table);
 
 
-	FILE * file = fopen("output1.txt", "w+");
-	int bytes_written = fwrite(table1, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	FILE * file = fopen("output.txt", "w+");
+	int bytes_written = fwrite(table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
-	free(table1);
-	file = fopen("output2.txt", "w+");
-	bytes_written = fwrite(table2, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
-	fclose(file);
-	free(table2);
+	free(table);
+
 	*/
-
 	
-	Cube cube(solvedCube_T);
-	for (int i = 0; i < 12; i++) {
-		for (int j = 0; j < 2; j++) {
-			std::cout << unsigned(cube.edgeIndexs[i][j]) << "\n";
+	unsigned char * edge1_table;
+	edge1_table = NEW_EGDE_TABLE;
+	unsigned char * edge2_table;
+	edge2_table = NEW_EGDE_TABLE;
+
+	unsigned char * corner_table;
+	corner_table = NEW_CORNER_TABLE;
+	
+	FILE * file = fopen("edge1_table.txt", "r+");
+	int bytes_read = fread(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	fclose(file);
+	file = fopen("edge2_table.txt", "r+");
+	bytes_read = fread(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	fclose(file);
+	file = fopen("corner_table.txt", "r+");
+	bytes_read = fread(corner_table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
+	fclose(file);
+
+	Solver solver(edge1_table, edge2_table, corner_table);
+	Cube cube(c);
+	unsigned char * solution = solver.SolveCube(cube);
+
+	if (solution != nullptr) {
+		for (int i = 0; i < 32; i++) {
+			if (solution[i] != 255) {
+				std::cout << unsigned(solution[i]) << " ";
+			}
 		}
 	}
 
 	
-	for (int i = 0; i < 6; i++) {
-		std::cout << "Pos: "  << unsigned(cube.edgeIndexs[i][0]) << " : " << unsigned(cube.cube[cube.edgeIndexs[i][0]]) << "\n";
-		std::cout << "Pos: " << unsigned(cube.edgeIndexs[i][1]) << " : " << unsigned(cube.cube[cube.edgeIndexs[i][1]]) << "\n";
-	//	std::cout << "Pos: " << unsigned(cube.cornerIndexs[i][2]) << " : " << unsigned(cube.cube[cube.cornerIndexs[i][2]]) << "\n";
-		std::cout << "EdgeIndex 1: " << cube.getEdgeIndex(0) << "EdgeIndex 2: " << cube.getEdgeIndex(1) << "\n";
+
+
+	/*
+	int index1 = 0, index2 = 0;
+
+	for (int i = 0; i < EDGE_TABLE_SIZE; i++) {
+		if (edge1_table[i] != 255) index1++;
+		if (edge2_table[i] != 255) index2++;
 	}
+	std::cout << "Edge table Index1: " << index1 << "	Index2: " << index2 << "\n";
+
+	index1 = 0;
+
+	for (int i = 0; i < CORNER_TABLE_SIZE; i++) {
+		if (corner_table[i] != 255) index1++;
+	}
+	std::cout << "Corner table Index: " << index1 << "\n";
+
+	free(edge1_table);
+	free(edge2_table);
+	free(corner_table);
+	*/
+	/*
+	GenerateEdge1Table(table1);
+	FILE * file = fopen("edge1_table.txt", "w+");
+	int bytes_written = fwrite(table1, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	fclose(file);
+	free(table1);
+
+	GenerateEdge2Table(table2);
+	file = fopen("edge2_table.txt", "w+");
+	bytes_written = fwrite(table2, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	fclose(file);
+	free(table2);
+
+	std::cout << "Done";
+	*/
+	/*file = fopen("outputCorner.txt", "w+");
+	bytes_written = fwrite(cornerTable, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
+	fclose(file);
+	free(cornerTable);*/
+	
+	/*
+	for (int move = 0; move < 18; move++) {
+
+		std::cout << "Move: " << move << "\n";
+		Cube cube(solvedCube_T);
+		cube.doMove(move);
+		//std::cout << "EdgeIndex 1: " << cube.getEdgeIndex(0) << "EdgeIndex 2: " << cube.getEdgeIndex(1) << "\n";
+
+		for (int i = 0; i < 8; i++) {
+			std::cout << "Pos: " << unsigned(cube.getCornerPos(i)) << "\n"; //<< " : " << unsigned(cube.cube[cube.edgeIndexs[i][0]]) << "\n";
+																		  //std::cout << "Pos: " << unsigned(cube.getEdgePos(i)); //<< " : " << unsigned(cube.cube[cube.edgeIndexs[i][1]]) << "\n";
+																		  //	std::cout << "Pos: " << unsigned(cube.cornerIndexs[i][2]) << " : " << unsigned(cube.cube[cube.cornerIndexs[i][2]]) << "\n";
+
+		}
+
+		std::cout << "\n \n";
+	}
+	*/
+
+	/*
+	for (int move = 0; move < 18; move++) {
+
+		std::cout << "Move: " << move << "\n";
+		Cube cube(solvedCube_T);
+		cube.doMove(move);
+		//std::cout << "EdgeIndex 1: " << cube.getEdgeIndex(0) << "EdgeIndex 2: " << cube.getEdgeIndex(1) << "\n";
+
+		for (int i = 0; i < 12; i++) {
+			std::cout << "Pos: " << unsigned(cube.getEdgePos(i)) << "\n"; //<< " : " << unsigned(cube.cube[cube.edgeIndexs[i][0]]) << "\n";
+																		  //std::cout << "Pos: " << unsigned(cube.getEdgePos(i)); //<< " : " << unsigned(cube.cube[cube.edgeIndexs[i][1]]) << "\n";
+																		  //	std::cout << "Pos: " << unsigned(cube.cornerIndexs[i][2]) << " : " << unsigned(cube.cube[cube.cornerIndexs[i][2]]) << "\n";
+
+		}
+
+		std::cout << "\n \n";
+	}
+	*/
+	
 }
 
