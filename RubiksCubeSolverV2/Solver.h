@@ -41,6 +41,10 @@ private:
 	void phase2Start(qdata cube);
 	void phase2Search(qdata cube);
 
+	void phase3Start(qdata cube);
+
+	void phase3Search(qdata cube);
+
 	void treeSreach(qdata cube);
 
 	void stack_solver(qdata cube);

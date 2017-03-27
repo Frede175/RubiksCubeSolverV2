@@ -1,4 +1,4 @@
 ﻿  Solver.cpp
-c:\users\fsr19\documents\programming\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(48): warning C4172: returning address of local variable or temporary: solution
-  RubiksCubeSolverV2.vcxproj -> C:\Users\fsr19\Documents\Programming\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.exe
-  RubiksCubeSolverV2.vcxproj -> C:\Users\fsr19\Documents\Programming\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.pdb (Partial PDB)
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(48): warning C4172: returning address of local variable or temporary: solution
+  RubiksCubeSolverV2.vcxproj -> D:\Programming\Projects\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.exe
+  RubiksCubeSolverV2.vcxproj -> D:\Programming\Projects\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.pdb (Partial PDB)

@@ -67,8 +67,47 @@ int main()
 	bytes_read = fread(corner_table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
 
+
+
+
+	Cube cube(solvedCube_T);
+
+	cube.doMove(16);
+	cube.doMove(10);
+	cube.doMove(14);
+	cube.doMove(17);
+	cube.doMove(7);
+	cube.doMove(17);
+	cube.doMove(6);
+	cube.doMove(5);
+	cube.doMove(16);
+	cube.doMove(5);
+	cube.doMove(1);
+	cube.doMove(17);
+	cube.doMove(8);
+	cube.doMove(12);
+	cube.doMove(8);
+	cube.doMove(16);
+	cube.doMove(5);
+	cube.doMove(2);
+	cube.doMove(10);
+	cube.doMove(16);
+	cube.doMove(3);
+	cube.doMove(9);
+	cube.doMove(17);
+	cube.doMove(12);
+	cube.doMove(10);
+
+
+	int	heuristic = corner_table[cube.getCornerIndex()];
+	int temp = edge1_table[cube.getEdgeIndex(0)];
+	if (heuristic < temp) heuristic = temp;
+	temp = edge2_table[cube.getEdgeIndex(1)];
+	if (heuristic < temp) heuristic = temp;
+	std::cout << "Heuristic: " << heuristic << "\n";
+
+	
 	Solver solver(edge1_table, edge2_table, corner_table);
-	Cube cube(c);
 	unsigned char * solution = solver.SolveCube(cube);
 
 	if (solution != nullptr) {
@@ -78,7 +117,7 @@ int main()
 			}
 		}
 	}
-
+	
 	
 
 

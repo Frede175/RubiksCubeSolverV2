@@ -53,13 +53,14 @@ unsigned char * Solver::SolveCube(Cube cube)
 void Solver::phase1Search(qdata cube) {
 	if (cube.depth == 0) {
 		//std::cout << "0 \n";
-		if (cube.cube.subgoal() && cube.cube.endsOnCurrectMove(cube.index == 0 ? 255 : cube.moves[cube.index - 1])) {
+		if (corner_table[cube.cube.getCornerIndex()] == 0) {
 			phase2Start(cube);
+			
 		}
 	} else if (cube.depth > 0) {
 		searched++;
 		if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << "\n";
-		if (corner_table[cube.cube.getCornerIndex()] + 1<= cube.depth && edge1_table[cube.cube.getEdgeIndex(0)] + 1 <= cube.depth && edge2_table[cube.cube.getEdgeIndex(1)] + 1 <= cube.depth) {
+		if (corner_table[cube.cube.getCornerIndex()] + 1<= cube.depth) {
 			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
 			unsigned char length = cube.index == 0 ? 18 : 15;
 			for (int i = 0; i < length; i++) {
@@ -83,7 +84,45 @@ void Solver::phase2Start(qdata cube) {
 }
 
 void Solver::phase2Search(qdata cube) {
-	std::cout << "Phase 2 \n";
+	//std::cout << "Phase 2 \n";
+	if (cube.depth == 0) {
+		if (edge1_table[cube.cube.getEdgeIndex(0)] == 0) {
+			phase3Start(cube);
+		}
+	}
+	else if (cube.depth > 0) {
+		searched++;
+		if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << " phase 2" << "\n";
+		if (edge1_table[cube.cube.getEdgeIndex(0)] + 1 <= cube.depth) {
+			//const unsigned char * availableMoves = cube.cube.getAvailableMovesInPhase2(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			//unsigned char length = cube.index == 0 ? 10 : cube.moves[cube.index - 1] > 10 ? 7 : 9;
+
+			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			unsigned char length = cube.index == 0 ? 18 : 15;
+
+			for (int i = 0; i < length; i++) {
+				qdata newCube(cube);
+				newCube.cube.doMove(availableMoves[i]);
+				newCube.moves[cube.index] = availableMoves[i];
+				newCube.index++;
+				newCube.depth--;
+				phase2Search(newCube);
+			}
+		}
+	}
+}
+
+void Solver::phase3Start(qdata cube) {
+	for (int i = 0; i < maxLength - cube.index; i++) {
+		qdata newCube = cube;
+		cube.depth = i;
+		phase3Search(newCube);
+	}
+}
+
+
+void Solver::phase3Search(qdata cube) {
+	//std::cout << "Phase 2 \n";
 	if (cube.depth == 0) {
 		if (cube.cube.isSolved()) {
 			currentSolution = cube;
@@ -94,17 +133,21 @@ void Solver::phase2Search(qdata cube) {
 	}
 	else if (cube.depth > 0) {
 		searched++;
-		if (searched % 10000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << " phase 2" << "\n";
-		if (corner_table[cube.cube.getCornerIndex()] + 1 <= cube.depth && edge1_table[cube.cube.getEdgeIndex(0)] + 1 <= cube.depth && edge2_table[cube.cube.getEdgeIndex(1)] + 1 <= cube.depth) {
-			const unsigned char * availableMoves = cube.cube.getAvailableMovesInPhase2(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
-			unsigned char length = cube.index == 0 ? 10 : cube.moves[cube.index - 1] > 10 ? 7 : 9;
+		if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << " phase 3" << "\n";
+		if (edge1_table[cube.cube.getEdgeIndex(0)] + 1 <= cube.depth && edge2_table[cube.cube.getEdgeIndex(1)] + 1 <= cube.depth && corner_table[cube.cube.getCornerIndex()] + 1 <= cube.depth) {
+			//const unsigned char * availableMoves = cube.cube.getAvailableMovesInPhase2(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			//unsigned char length = cube.index == 0 ? 10 : cube.moves[cube.index - 1] > 10 ? 7 : 9;
+
+			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			unsigned char length = cube.index == 0 ? 18 : 15;
+
 			for (int i = 0; i < length; i++) {
 				qdata newCube(cube);
 				newCube.cube.doMove(availableMoves[i]);
 				newCube.moves[cube.index] = availableMoves[i];
 				newCube.index++;
 				newCube.depth--;
-				phase1Search(newCube);
+				phase3Search(newCube);
 			}
 		}
 	}
