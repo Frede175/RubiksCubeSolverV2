@@ -2,6 +2,8 @@
 #ifndef Solver_T
 #define Solver_T
 #include "Cube.h"
+#include <queue>
+
 
 const int maxSearchLength = 32;
 
@@ -40,6 +42,8 @@ private:
 	void phase2Search(qdata cube);
 
 	void treeSreach(qdata cube);
+
+	void stack_solver(qdata cube);
 };
 
 

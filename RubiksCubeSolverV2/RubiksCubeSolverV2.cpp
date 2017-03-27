@@ -10,12 +10,12 @@
 int main()
 {
 	unsigned char c[48] = {
-		RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::WHITE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::ORANGE,
-		RubikColor_T::GREEN, RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::ORANGE, RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::YELLOW,
-		RubikColor_T::ORANGE, RubikColor_T::BLUE, RubikColor_T::GREEN, RubikColor_T::WHITE, RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::GREEN, RubikColor_T::RED,
-		RubikColor_T::WHITE, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::YELLOW,
-		RubikColor_T::ORANGE, RubikColor_T::ORANGE, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::ORANGE, RubikColor_T::GREEN,
-		RubikColor_T::GREEN, RubikColor_T::WHITE, RubikColor_T::BLUE, RubikColor_T::WHITE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::GREEN, RubikColor_T::BLUE
+		RubikColor_T::ORANGE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::GREEN, RubikColor_T::YELLOW, RubikColor_T::GREEN,
+		RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::BLUE, RubikColor_T::WHITE,RubikColor_T::GREEN,RubikColor_T::YELLOW,RubikColor_T::	YELLOW,
+		RubikColor_T::RED, RubikColor_T::ORANGE, RubikColor_T::WHITE, RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::ORANGE, RubikColor_T::WHITE,RubikColor_T::ORANGE,
+		RubikColor_T::ORANGE, RubikColor_T::YELLOW, RubikColor_T::WHITE, RubikColor_T::ORANGE, RubikColor_T::WHITE, RubikColor_T::YELLOW, RubikColor_T::GREEN, RubikColor_T::YELLOW,
+		RubikColor_T::RED, RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::ORANGE, RubikColor_T::RED, RubikColor_T::ORANGE, RubikColor_T::RED,
+		RubikColor_T::GREEN, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::GREEN, RubikColor_T::RED, RubikColor_T::WHITE, RubikColor_T::GREEN, RubikColor_T::BLUE
 	};
 	//Cube cube(solvedCube_T);
 	
