@@ -119,7 +119,7 @@ int main()
 	}
 	
 	
-
+	
 
 	/*
 	int index1 = 0, index2 = 0;
@@ -142,17 +142,24 @@ int main()
 	free(corner_table);
 	*/
 	/*
-	GenerateEdge1Table(table1);
-	FILE * file = fopen("edge1_table.txt", "w+");
-	int bytes_written = fwrite(table1, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	GenerateTables(corner_table, CORNER_TABLE_SIZE, 0);
+	FILE * file = fopen("corner_table.txt", "w+");
+	int bytes_written = fwrite(corner_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
-	free(table1);
+	free(corner_table);
 
-	GenerateEdge2Table(table2);
-	file = fopen("edge2_table.txt", "w+");
-	bytes_written = fwrite(table2, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+
+	GenerateTables(edge1_table, EDGE_TABLE_SIZE, 1);
+	file = fopen("edge1_table.txt", "w+");
+	bytes_written = fwrite(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
-	free(table2);
+	free(edge1_table);
+	
+	GenerateTables(edge2_table, EDGE_TABLE_SIZE, 2);
+	file = fopen("edge2_table.txt", "w+");
+	int bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	fclose(file);
+	free(edge2_table);
 
 	std::cout << "Done";
 	*/

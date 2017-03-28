@@ -4,6 +4,10 @@
 #include "Cube.h"
 #include <queue>
 
+#define TABLE_LOOKUP(table, hash) (hash&1 ? \
+        table[(hash-1)>>1] >> 4 : \
+        table[hash/2] & 15)
+
 
 const int maxSearchLength = 32;
 

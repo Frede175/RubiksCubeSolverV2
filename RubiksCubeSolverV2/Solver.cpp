@@ -29,7 +29,7 @@ unsigned char * Solver::SolveCube(Cube cube)
 		data.cube = cube;
 		data.depth = depth;
 		data.index = 0;
-		phase1Search(data);
+		treeSreach(data);
 
 		std::cout << "Depth: " << depth << "\n";
 
@@ -53,14 +53,14 @@ unsigned char * Solver::SolveCube(Cube cube)
 void Solver::phase1Search(qdata cube) {
 	if (cube.depth == 0) {
 		//std::cout << "0 \n";
-		if (corner_table[cube.cube.getCornerIndex()] == 0) {
+		if (cube.cube.subgoal()) {
 			phase2Start(cube);
 			
 		}
 	} else if (cube.depth > 0) {
 		searched++;
 		if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << "\n";
-		if (corner_table[cube.cube.getCornerIndex()] + 1<= cube.depth) {
+		if (TABLE_LOOKUP(corner_table, cube.cube.getCornerIndex()) + 1 <= cube.depth && TABLE_LOOKUP(edge1_table, cube.cube.getEdgeIndex(0)) + 1 <= cube.depth && TABLE_LOOKUP(edge2_table, cube.cube.getEdgeIndex(1)) + 1 <= cube.depth) {
 			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
 			unsigned char length = cube.index == 0 ? 18 : 15;
 			for (int i = 0; i < length; i++) {
@@ -86,19 +86,22 @@ void Solver::phase2Start(qdata cube) {
 void Solver::phase2Search(qdata cube) {
 	//std::cout << "Phase 2 \n";
 	if (cube.depth == 0) {
-		if (edge1_table[cube.cube.getEdgeIndex(0)] == 0) {
-			phase3Start(cube);
+		if (cube.cube.isSolved()) {
+			currentSolution = cube;
+			hasSolution = true;
+			std::cout << "Solution \n";
+			maxLength = cube.index - 1;
 		}
 	}
 	else if (cube.depth > 0) {
 		searched++;
 		if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << " phase 2" << "\n";
-		if (edge1_table[cube.cube.getEdgeIndex(0)] + 1 <= cube.depth) {
-			//const unsigned char * availableMoves = cube.cube.getAvailableMovesInPhase2(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
-			//unsigned char length = cube.index == 0 ? 10 : cube.moves[cube.index - 1] > 10 ? 7 : 9;
+		if (TABLE_LOOKUP(corner_table, cube.cube.getCornerIndex()) + 1 <= cube.depth && TABLE_LOOKUP(edge1_table, cube.cube.getEdgeIndex(0)) + 1 <= cube.depth && TABLE_LOOKUP(edge2_table, cube.cube.getEdgeIndex(1)) + 1 <= cube.depth) {
+			const unsigned char * availableMoves = cube.cube.getAvailableMovesInPhase2(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			unsigned char length = cube.index == 0 ? 10 : cube.moves[cube.index - 1] > 10 ? 7 : 9;
 
-			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
-			unsigned char length = cube.index == 0 ? 18 : 15;
+			//const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
+			//unsigned char length = cube.index == 0 ? 18 : 15;
 
 			for (int i = 0; i < length; i++) {
 				qdata newCube(cube);
@@ -166,9 +169,9 @@ void Solver::treeSreach(qdata cube) {
 	else if (cube.depth > 0) {
 		
 		
-		if (corner_table[cube.cube.getCornerIndex()] <= cube.depth && edge1_table[cube.cube.getEdgeIndex(0)] <= cube.depth && edge2_table[cube.cube.getEdgeIndex(1)] <= cube.depth) {
+		if (TABLE_LOOKUP(corner_table, cube.cube.getCornerIndex()) + 1 <= cube.depth && TABLE_LOOKUP(edge1_table, cube.cube.getEdgeIndex(0)) + 1 <= cube.depth && TABLE_LOOKUP(edge2_table, cube.cube.getEdgeIndex(1)) + 1 <= cube.depth) {
 			searched++;
-			if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << " phase 2" << "\n";
+			if (searched % 200000 == 0) std::cout << "Searched: " << searched << " " << unsigned(cube.depth) << "\n";
 			const unsigned char * availableMoves = cube.cube.getAvailableMoves(cube.index == 0 ? 255 : cube.moves[cube.index - 1]);
 			unsigned char length = cube.index == 0 ? 18 : 15;
 			for (int i = 0; i < length; i++) {
@@ -231,13 +234,13 @@ void Solver::stack_solver(qdata cube) {
 				turnedCube.cube.doMove(turns[i]);
 				turnedCube.index++;
 
-				int	heuristic = corner_table[cube.cube.getCornerIndex()];
-				int temp = edge1_table[cube.cube.getEdgeIndex(0)];
+				int	heuristic = TABLE_LOOKUP(corner_table, cube.cube.getCornerIndex());
+				int temp = TABLE_LOOKUP(edge1_table, cube.cube.getEdgeIndex(0));
 				if (heuristic < temp) heuristic = temp;
-				temp = edge2_table[cube.cube.getEdgeIndex(1)];
+				temp = TABLE_LOOKUP(edge2_table, cube.cube.getEdgeIndex(1));
 				if (heuristic < temp) heuristic = temp;
 
-				if (heuristic + turnedCube.index > depth) {
+				if (heuristic + turnedCube.index + 1 > depth) {
 					continue;
 				}
 

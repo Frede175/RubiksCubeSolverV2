@@ -120,6 +120,8 @@ bool GenerateEdge1Table(unsigned char * table)
 }
 
 
+
+
 bool GenerateEdge2Table(unsigned char * table)
 {
 	std::queue<sdata> queue;
@@ -175,3 +177,90 @@ bool GenerateEdge2Table(unsigned char * table)
 
 	return true;
 }
+
+bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableID)
+{
+	std::queue<sdata> queue;
+	int pops = 0;
+	int nodesInQueue = 0;
+	for (int i = 0; i < tableLength; i++) {
+		table[i] = 0;
+	}
+	sdata start = {
+		Cube(solvedCube_T),
+		255,
+		0
+	};
+	int tableIndex = 1;
+
+	queue.push(start);
+	nodesInQueue++;
+	unsigned char depth = 0;
+	while (tableIndex < tableLength) {
+
+		if (queue.empty()) {
+
+			std::cout << "Something went worng, Table Index: " << tableIndex << "/" << tableLength << "\n";
+
+			return false;
+		}
+
+		//get the front elemnet and do every available move.
+		sdata element = queue.front();
+		const unsigned char * availableMoves = element.cube.getAvailableMoves(element.lastMove);
+		unsigned char length = element.lastMove == 255 ? 18 : 15;
+
+		depth = element.depth + 1;
+		for (int i = 0; i < length; i++) {
+			Cube newCube(element.cube);
+			newCube.doMove(availableMoves[i]);
+			int hash = getIndex(&newCube, tableID);
+
+			bool add = false;
+
+			if (hash & 1) {
+				if (!(table[(hash - 1) / 2] >> 4)) {
+					table[(hash - 1) / 2] |= depth << 4;
+					add = true;
+				}
+			} else {
+				if (!(table[hash / 2] & 15)) {
+					table[hash / 2] |= depth;
+					add = true;
+				}
+			}
+
+
+			if (add) {
+				tableIndex++;
+				if (tableIndex % 200000 == 0) std::cout << "Pops: " << pops << "	, Depth: " << unsigned(depth) << "	, Nodes in queue: " << nodesInQueue << "	table Index: " << tableIndex << "/" << tableLength << "\n";
+				queue.push({ newCube, availableMoves[i], depth });
+				nodesInQueue++;
+			}
+				
+
+		}
+		queue.pop();
+		nodesInQueue--;
+		pops++;
+	}
+	std::cout << "Table Index: " << tableIndex << "/" << tableLength << "\n";
+
+	return true;
+}
+
+int getIndex(Cube * cube, unsigned char tableID)
+{
+	switch (tableID)
+	{
+	case 0:
+		return cube->getCornerIndex();
+	case 1:
+		return cube->getEdgeIndex(0);
+	case 2:
+		return cube->getEdgeIndex(1);
+	default:
+		return 255;
+	}
+}
+

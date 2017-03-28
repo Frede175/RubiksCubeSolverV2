@@ -29,6 +29,11 @@ namespace Tables {
 bool GenerateCornerTable(unsigned char * table);
 bool GenerateEdge2Table(unsigned char * table);
 bool GenerateEdge1Table(unsigned char * table);
+
+bool GenerateTables(unsigned char * table, int length, unsigned char tableID);
+
+
+int getIndex(Cube * cube, unsigned char tableID);
 //bool GenerateEdgeTable(unsigned char * table1, unsigned char * table2);
 //bool GenerateTable(unsigned char * edgeTable1, unsigned char * edgeTable2, unsigned char * cornerTable);
 
