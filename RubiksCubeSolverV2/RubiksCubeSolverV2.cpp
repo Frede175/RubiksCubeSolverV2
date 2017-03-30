@@ -1,18 +1,32 @@
 // RubiksCubeSolverV2.cpp : Defines the entry point for the console application.
 //
 
+
+
+
 #include "stdafx.h"
 #include "Helper.h"
 #include "Cube.h"
 #include "Tables.h"
 #include "Solver.h"
-
-//https://www.youtube.com/watch?v=7SM5OD2pZKY
+#include "Camera.h"
+#include <thread>    
+//https://www.youtube.com/watch?v=7SM5OD2pZKY c++ opencv instalation
 
 int main()
 {
 
-	
+
+	//Camera test:
+	Camera camera(0);
+
+
+	std::thread camThread(camera.loop);
+
+	camThread.join();
+
+
+	/*
 
 
 	unsigned char c[48] = {
@@ -25,7 +39,7 @@ int main()
 	};
 	//Cube cube(solvedCube_T);
 	
-
+	*/
 	//cube.doMove(12);
 	//std::cout << "Index: " << cube.getEdgeIndex(0) << " index: " << cube.getEdgeIndex(1) << "\n";
 	/*
@@ -54,7 +68,7 @@ int main()
 	free(table);
 
 	*/
-	
+	/*
 	unsigned char * edge1_table;
 	edge1_table = NEW_EGDE_TABLE;
 	unsigned char * edge2_table;
@@ -125,7 +139,7 @@ int main()
 	}
 	
 	
-	
+	*/
 
 	/*
 	int index1 = 0, index2 = 0;
