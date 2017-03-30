@@ -7,8 +7,14 @@
 #include "Tables.h"
 #include "Solver.h"
 
+//https://www.youtube.com/watch?v=7SM5OD2pZKY
+
 int main()
 {
+
+	
+
+
 	unsigned char c[48] = {
 		RubikColor_T::ORANGE, RubikColor_T::BLUE, RubikColor_T::BLUE, RubikColor_T::RED, RubikColor_T::BLUE, RubikColor_T::GREEN, RubikColor_T::YELLOW, RubikColor_T::GREEN,
 		RubikColor_T::BLUE, RubikColor_T::YELLOW, RubikColor_T::YELLOW, RubikColor_T::BLUE, RubikColor_T::WHITE,RubikColor_T::GREEN,RubikColor_T::YELLOW,RubikColor_T::	YELLOW,
