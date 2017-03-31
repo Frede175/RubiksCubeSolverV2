@@ -18,12 +18,12 @@ int main()
 
 
 	//Camera test:
-	Camera camera(0);
+	Camera camera(1);
 
+	camera.loop();
+	//std::thread camThread(&Camera::loop, &camera);
 
-	std::thread camThread(camera.loop);
-
-	camThread.join();
+//	camThread.join();
 
 
 	/*
