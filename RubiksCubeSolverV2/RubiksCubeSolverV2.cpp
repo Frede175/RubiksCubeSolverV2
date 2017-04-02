@@ -18,9 +18,12 @@ int main()
 
 
 	//Camera test:
-	Camera camera(1);
+	//Camera camera(0);
 
-	camera.loop();
+	//camera.calibrate();
+
+//	std::cout << "Donme";
+	//camera.loop();
 	//std::thread camThread(&Camera::loop, &camera);
 
 //	camThread.join();
@@ -68,7 +71,7 @@ int main()
 	free(table);
 
 	*/
-	/*
+	
 	unsigned char * edge1_table;
 	edge1_table = NEW_EGDE_TABLE;
 	unsigned char * edge2_table;
@@ -77,6 +80,7 @@ int main()
 	unsigned char * corner_table;
 	corner_table = NEW_CORNER_TABLE;
 	
+	/*
 	FILE * file = fopen("edge1_table.txt", "r+");
 	int bytes_read = fread(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
@@ -161,10 +165,10 @@ int main()
 	free(edge2_table);
 	free(corner_table);
 	*/
-	/*
+	
 	GenerateTables(corner_table, CORNER_TABLE_SIZE, 0);
 	FILE * file = fopen("corner_table.txt", "w+");
-	int bytes_written = fwrite(corner_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	int bytes_written = fwrite(corner_table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
 	free(corner_table);
 
@@ -177,12 +181,12 @@ int main()
 	
 	GenerateTables(edge2_table, EDGE_TABLE_SIZE, 2);
 	file = fopen("edge2_table.txt", "w+");
-	int bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
 	free(edge2_table);
 
 	std::cout << "Done";
-	*/
+	
 	/*file = fopen("outputCorner.txt", "w+");
 	bytes_written = fwrite(cornerTable, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);

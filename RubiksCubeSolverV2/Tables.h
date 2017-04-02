@@ -9,8 +9,8 @@
 #define EDGE_TABLE_SIZE 42577920
 
 
-#define NEW_CORNER_TABLE new unsigned char[CORNER_TABLE_SIZE]
-#define NEW_EGDE_TABLE new unsigned char[EDGE_TABLE_SIZE]
+#define NEW_CORNER_TABLE new unsigned char[CORNER_TABLE_SIZE]()
+#define NEW_EGDE_TABLE new unsigned char[EDGE_TABLE_SIZE]()
 
 typedef struct {
 	Cube cube;

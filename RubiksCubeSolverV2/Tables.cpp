@@ -180,6 +180,7 @@ bool GenerateEdge2Table(unsigned char * table)
 
 bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableID)
 {
+	/*
 	std::queue<sdata> queue;
 	int pops = 0;
 	int nodesInQueue = 0;
@@ -247,6 +248,148 @@ bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableI
 	std::cout << "Table Index: " << tableIndex << "/" << tableLength << "\n";
 
 	return true;
+	*/
+	
+	sdata start = {
+		Cube(solvedCube_T),
+		255,
+		0
+	};
+
+	std::queue<sdata> stack;
+	/*
+	* qdata is a struct, holding cube string 'cube_data',
+	* an int representing the turn that was made, 'turn',
+	* and an int representing the distance, 'distance'
+	*/
+	sdata current;
+	int count = 0; /* total hashed */
+	int popcount = 0; /* total traversed */
+	int hash;
+	int i;
+	unsigned char *instack;
+//	int depth;
+	Cube turned;
+
+	/* Create a stack */
+
+	/*
+	* create a temporary table to keep track of the stack This holds the value
+	* of each item that has been added to the stack, and its distance.  This
+	* way, we know if we encounter the same node but at a further distance we
+	* can throw it away.  This heuristic cuts down on processing time by quite
+	* a bit, and is only as time intensive as the hashing algorithm, at the
+	* expense of using more memory.
+	*/
+	
+	if (tableID == 0) instack = NEW_CORNER_TABLE;
+	else if (tableID == 1) instack = NEW_EGDE_TABLE;
+	else if (tableID == 2) instack = NEW_EGDE_TABLE;
+
+	for (int a = 0; a < tableLength; a++) {
+		instack[a] = 255;
+	}
+
+	int depth = -1;
+	while (count < tableLength) {
+		/* if stack is empty, go up a level */
+		if (stack.empty()) {
+			stack.push(start);
+			depth++;
+			/* clear out instack table */
+			for (int a = 0; a < tableLength; a++) {
+				instack[a] = 255;
+			}
+		}
+
+		/* Pop the first item off, put it in current */
+		current = stack.front();
+		stack.pop();
+		popcount++;
+
+		/* Print out status every 2^18 pops  (approx every 200k)*/
+		if ((popcount & 0777777) == 0777777) {
+			fprintf(stderr, "\r%d/88179840 hashed, on level:%d/11, total traversed:%d ", count, depth, popcount);
+		}
+#ifdef PROFILE_MODE
+		/* For profiling, so I don't have to wait an hour to gather data */
+		if (count == 10000000) {
+			return 0;
+		}
+#endif
+
+		/*
+		* if item is at our current target depth, add it to hash table
+		*/
+		if (current.depth == depth) {
+			
+			hash = getIndex(&current.cube, tableID);
+			
+			if (hash & 1) {
+				if (!(table[(hash - 1) / 2] >> 4)) {
+					table[(hash - 1) / 2] |= current.depth << 4;
+					count++;
+				} else {
+					/* A duplicate, skip */
+				}
+			} else {
+				if (!(table[hash / 2] & 15)) {
+					table[hash / 2] |= current.depth;
+					count++;
+				} else {
+					/* a duplicate */
+				}
+			}
+		} else {
+			/* Not at the current depth, put all turns onto the stack */
+
+			const unsigned char * availableMoves = current.cube.getAvailableMoves(current.lastMove);
+			unsigned char length = current.lastMove == 255 ? 18 : 15;
+
+
+			for (i = 0; i<length; i++) {
+				
+
+				turned = Cube(current.cube);
+				turned.doMove(availableMoves[i]);
+
+				/*
+				* Check if turned is in instack and is greater than
+				* or equal to the depth.  If so, skip
+				*/
+				hash = getIndex(&turned, tableID);
+				if (hash & 1 ? \
+					((instack[(hash - 1) / 2] >> 4) <= (current.depth + 1)) : \
+					((instack[hash / 2] & 15) <= (current.depth + 1))) {
+					continue;
+				}
+				/* add to instack */
+				if (hash & 1) {
+					instack[(hash - 1) / 2] &= 15;
+					instack[(hash - 1) / 2] |= (current.depth + 1) << 4;
+				} else {
+					instack[hash / 2] &= 15 << 4;
+					instack[hash / 2] |= (current.depth + 1);
+				}
+				unsigned char d = current.depth + (unsigned char)1;
+				/* Add to real stack */
+				stack.push({ turned, availableMoves[i], d });
+			}
+		}
+
+	}
+	
+	free(instack);
+	while (!stack.empty()) {
+		stack.pop();
+	}
+	fprintf(stderr, "\n");
+
+
+
+
+	return true;
+	
 }
 
 int getIndex(Cube * cube, unsigned char tableID)

@@ -4,7 +4,7 @@
 
 #include <opencv2\highgui\highgui.hpp>
 #include <opencv2\imgproc\imgproc.hpp>
-
+#include <string>
 class Camera {
 public:
 	Camera(int cameraID);
@@ -12,7 +12,10 @@ public:
 	cv::Mat getImage();
 	void loop();
 	//Should output an array with colors 
-	unsigned char * getColors(cv::Mat * image); 
+	void getColors(cv::Mat image, unsigned char * arr);
+
+
+	void calibrate();
 
 private:
 	cv::VideoCapture camera;
@@ -30,15 +33,18 @@ private:
 	int iLowV = 0;
 	int iHighV = 255;
 
-
+	cv::Scalar cColors[6][2]; 
 
 
 	int scale = 7;
 	void createRectFromCenter(cv::Point center, cv::Mat * frame);
 	void drawColors(cv::Mat * frame, unsigned char * arr);
+
+	unsigned char getColor(cv::Scalar hsv, cv::Scalar bgr);
+
 	cv::Point getCenter(int x, int y); // this is the coordinates form -1 to 1
 	cv::Rect getRectFromCenter(cv::Point center);
-    const char * colorStrings[6] = {
+	static constexpr char * colorStrings[6] = {
 		"White",
 		"Red",
 		"Orange",
@@ -47,6 +53,32 @@ private:
 		"Yellow"
 	};
 
+	static constexpr char * shortColorStrings[6] = {
+		"1",
+		"2",
+		"3",
+		"4",
+		"5",
+		"6"
+	};
+
+	const cv::Scalar targetColors[6] = {
+		cv::Scalar(180, 0, 255),
+		cv::Scalar(0, 255, 255),
+		cv::Scalar(15, 255, 255),
+		cv::Scalar(50, 255, 255),
+		cv::Scalar(120, 255, 255),
+		cv::Scalar(30, 255, 255)
+	};
+
+	const cv::Scalar targetColorsBGR[6] = {
+		cv::Scalar(255,255,255),
+		cv::Scalar(0,0,255),
+		cv::Scalar(0, 128, 255),
+		cv::Scalar(0, 255, 255),
+		cv::Scalar(255, 0, 0),
+		cv::Scalar(0, 255, 255),
+	};
 
 	const cv::Scalar colors[6] = {
 		cv::Scalar(255,255,255,255),
