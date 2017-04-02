@@ -290,7 +290,7 @@ bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableI
 		instack[a] = 255;
 	}
 
-	int depth = -1;
+	int depth = 0;
 	while (count < tableLength) {
 		/* if stack is empty, go up a level */
 		if (stack.empty()) {
@@ -309,7 +309,7 @@ bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableI
 
 		/* Print out status every 2^18 pops  (approx every 200k)*/
 		if ((popcount & 0777777) == 0777777) {
-			fprintf(stderr, "\r%d/88179840 hashed, on level:%d/11, total traversed:%d ", count, depth, popcount);
+			fprintf(stderr, "\r%d/%d hashed, on level:%d/11, total traversed:%d ", count, tableLength, depth, popcount);
 		}
 #ifdef PROFILE_MODE
 		/* For profiling, so I don't have to wait an hour to gather data */
@@ -317,68 +317,81 @@ bool GenerateTables(unsigned char * table, int tableLength, unsigned char tableI
 			return 0;
 		}
 #endif
+		/* Not at the current depth, put all turns onto the stack */
 
-		/*
-		* if item is at our current target depth, add it to hash table
-		*/
-		if (current.depth == depth) {
-			
-			hash = getIndex(&current.cube, tableID);
-			
-			if (hash & 1) {
-				if (!(table[(hash - 1) / 2] >> 4)) {
-					table[(hash - 1) / 2] |= current.depth << 4;
-					count++;
-				} else {
-					/* A duplicate, skip */
-				}
-			} else {
-				if (!(table[hash / 2] & 15)) {
-					table[hash / 2] |= current.depth;
-					count++;
-				} else {
-					/* a duplicate */
-				}
-			}
-		} else {
-			/* Not at the current depth, put all turns onto the stack */
-
-			const unsigned char * availableMoves = current.cube.getAvailableMoves(current.lastMove);
-			unsigned char length = current.lastMove == 255 ? 18 : 15;
+		const unsigned char * availableMoves = current.cube.getAvailableMoves(current.lastMove);
+		unsigned char length = current.lastMove == 255 ? 18 : 15;
 
 
-			for (i = 0; i<length; i++) {
+		for (i = 0; i<length; i++) {
 				
 
-				turned = Cube(current.cube);
-				turned.doMove(availableMoves[i]);
+			turned = Cube(current.cube);
+			turned.doMove(availableMoves[i]);
 
-				/*
-				* Check if turned is in instack and is greater than
-				* or equal to the depth.  If so, skip
-				*/
-				hash = getIndex(&turned, tableID);
-				if (hash & 1 ? \
-					((instack[(hash - 1) / 2] >> 4) <= (current.depth + 1)) : \
-					((instack[hash / 2] & 15) <= (current.depth + 1))) {
-					continue;
-				}
-				/* add to instack */
+			/*
+			* Check if turned is in instack and is greater than
+			* or equal to the depth.  If so, skip
+			*/
+			hash = getIndex(&turned, tableID);
+			if (hash & 1 ? \
+				((instack[(hash - 1) / 2] >> 4) <= (current.depth+1)) : \
+				((instack[hash / 2] & 15) <= (current.depth + 1))) {
+				continue;
+			}
+			/* add to instack */
+			if (hash & 1) {
+				instack[(hash - 1) / 2] &= 15;
+				instack[(hash - 1) / 2] |= (current.depth + 1) << 4;
+			} else {
+				instack[hash / 2] &= 15 << 4;
+				instack[hash / 2] |= (current.depth + 1);
+			}
+
+
+			if (current.depth + 1 == depth) {
+
 				if (hash & 1) {
-					instack[(hash - 1) / 2] &= 15;
-					instack[(hash - 1) / 2] |= (current.depth + 1) << 4;
+					if (!(table[(hash - 1) / 2] >> 4)) {
+						table[(hash - 1) / 2] |= (current.depth + 1) << 4;
+						count++;
+					} else {
+						/* A duplicate, skip */
+					}
 				} else {
-					instack[hash / 2] &= 15 << 4;
-					instack[hash / 2] |= (current.depth + 1);
+					if (!(table[hash / 2] & 15)) {
+						table[hash / 2] |= current.depth + 1;
+						count++;
+					} else {
+						/* a duplicate */
+					}
 				}
+
+			} else {
 				unsigned char d = current.depth + (unsigned char)1;
 				/* Add to real stack */
 				stack.push({ turned, availableMoves[i], d });
 			}
+
+			
 		}
 
 	}
 	
+
+	hash = getIndex(&Cube(solvedCube_T), tableID);
+	if (hash & 1) {
+		/* zero out upper bits */
+		table[(hash - 1) / 2] &= 15;
+	} else {
+		/* zero out lower bits */
+		table[hash / 2] &= (15 << 4);
+	}
+
+
+
+
+
 	free(instack);
 	while (!stack.empty()) {
 		stack.pop();

@@ -90,18 +90,18 @@ private:
 
 	//Front/back first. if not front/back then top/down first
 	static constexpr unsigned char edgeIndexs[12][2] = {
-		{ 1, 33 }, //UB  
-		{ 3, 9 }, //UL
 		{ 6, 17 }, //UF
-		{ 4, 25 }, //UR
+		{ 19, 12 }, //FL
 		{ 41, 22 }, //DF
-		{ 43, 14 }, //DL
+		{ 20, 27 }, //FR
+		{ 35, 28 },//BR
+		{ 1, 33 }, //UB  
+		{ 36, 11 },//BL
 		{ 46, 38 }, //DB
 		{ 44, 30 }, //DR
-		{ 20, 27 }, //FR
-		{ 19, 12 }, //FL
-		{ 35, 28 },//BR
-		{ 36, 11 } //BL
+		{ 4, 25 }, //UR
+		{ 3, 9 }, //UL
+		{ 43, 14 }, //DL
 	};
 
 	static constexpr unsigned char availableMoves[7][18] = {

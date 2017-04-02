@@ -319,12 +319,12 @@ int Cube::getEdgeIndex(int table)
 	}
 	*/
 
-	for (int i = 6 * table; i < 6 * (table + 1); i++) {
-		int num = getEdgePos(i);
+	for (int i = 0; i < 6; i++) {
+		int num = getEdgePos(i + 6 * table);
 		int pos = 0;
 		while (num != arr[pos]) pos++;
-		iv[i - 6 * table] = pos;
-		for (int j = pos; j < 12 - 1; j++) {
+		iv[i] = pos;
+		for (int j = pos; j < 12 - 1 - i; j++) {
 			arr[j] = arr[j + 1];
 		}
 	}
@@ -346,7 +346,10 @@ int Cube::getEdgeIndex(int table)
 	*/
 	unsigned char or [6];
 	for (int i = 6 * table; i < 6 * (table + 1); i++) {
-		if (cube[edgeIndexs[i][0]] == RubikColor_T::RED || cube[edgeIndexs[i][0]] == RubikColor_T::ORANGE || ((cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) && (cube[edgeIndexs[i][1]] == RubikColor_T::BLUE || cube[edgeIndexs[i][1]] == RubikColor_T::GREEN))) or [i - 6 * table] = 1; else or [i - 6 * table] = 0;
+		if (cube[edgeIndexs[i][0]] == RubikColor_T::RED || cube[edgeIndexs[i][0]] == RubikColor_T::ORANGE || 
+			((cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) && 
+			(cube[edgeIndexs[i][1]] == RubikColor_T::BLUE || cube[edgeIndexs[i][1]] == RubikColor_T::GREEN)))
+				or [i - 6 * table] = 1; else or [i - 6 * table] = 0;
 		/*
 		if (i < 12 - 4) {
 			if (cube[edgeIndexs[i][0]] == RubikColor_T::RED || cube[edgeIndexs[i][0]] == RubikColor_T::ORANGE || ((cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) && (cube[edgeIndexs[i][1]] == RubikColor_T::BLUE || cube[edgeIndexs[i][1]] == RubikColor_T::GREEN))) or[i - 6 * table] = 1; else or[i - 6 * table] = 0;
@@ -375,7 +378,7 @@ int Cube::getEdgeIndex(int table)
 		std::cout << "Something went wrong (to): " << to << "\n";
 	}
 
-
+	
 	for (int i = 6 * table; i <  6 * (table + 1); i++) {
 		std::cout << unsigned(or [i - 6 * table]) << " " << unsigned(edgeIndexs[i][0]) << " " << unsigned(cube[edgeIndexs[i][0]]) << " " << i << " " << table <<"\n";
 	}
@@ -386,6 +389,12 @@ int Cube::getEdgeIndex(int table)
 		(iv[3] + or [3] * 9) * 224 +
 		(iv[4] + or [4] * 8) * 14 +
 		(iv[5] + or [5] * 7);
+
+
+	if (index >= 42577920) {
+		fprintf(stderr, "\nWARNING: HASH RETURNED %d\n", index);
+		index = *((int *)0x0); /* sigsev */
+	}
 
 
 	//std::cout << "Index (" << table << "): " << (64 * tp + to) << "\n";

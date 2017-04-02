@@ -165,17 +165,17 @@ int main()
 	free(edge2_table);
 	free(corner_table);
 	*/
-	
+	/*
 	GenerateTables(corner_table, CORNER_TABLE_SIZE, 0);
 	FILE * file = fopen("corner_table.txt", "w+");
 	int bytes_written = fwrite(corner_table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
 	free(corner_table);
-
-
+	
+	*/
 	GenerateTables(edge1_table, EDGE_TABLE_SIZE, 1);
-	file = fopen("edge1_table.txt", "w+");
-	bytes_written = fwrite(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	FILE * file = fopen("edge1_table.txt", "w+");
+	int bytes_written = fwrite(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
 	free(edge1_table);
 	
