@@ -18,7 +18,7 @@ int main()
 
 
 	//Camera test:
-	//Camera camera(0);
+	//Camera camera(1);
 
 	//camera.calibrate();
 
@@ -171,17 +171,20 @@ int main()
 	int bytes_written = fwrite(corner_table, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
 	free(corner_table);
-	
 	*/
+	/*
 	GenerateTables(edge1_table, EDGE_TABLE_SIZE, 1);
 	FILE * file = fopen("edge1_table.txt", "w+");
 	int bytes_written = fwrite(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
 	free(edge1_table);
+
+	std::cout << "DOne";
+	*/
 	
 	GenerateTables(edge2_table, EDGE_TABLE_SIZE, 2);
-	file = fopen("edge2_table.txt", "w+");
-	bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	FILE * file = fopen("edge2_table.txt", "w+");
+	int bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
 	free(edge2_table);
 

@@ -88,20 +88,43 @@ private:
 	};
 
 
+	
+	/*
+             00  01  02
+			 03  UB  04
+             05  06  07
+
+08  09  10   16  17  18   24  25  26   32  33  34
+11  LO  12   19  FW  20   27  RR  28   35  BY  36
+13  14  15   21  22  23   29  30  31   37  38  39
+
+			 40  41  42
+			 43  DG  44
+			 45  46  47
+	*/
+
+
+
 	//Front/back first. if not front/back then top/down first
 	static constexpr unsigned char edgeIndexs[12][2] = {
+		{ 36, 11 },//BL
+		{ 46, 38 }, //DB
+		{ 44, 30 }, //DR
+		{ 4, 25 }, //UR
+		{ 3, 9 }, //UL
+		
+
+
+
 		{ 6, 17 }, //UF
 		{ 19, 12 }, //FL
 		{ 41, 22 }, //DF
 		{ 20, 27 }, //FR
 		{ 35, 28 },//BR
 		{ 1, 33 }, //UB  
-		{ 36, 11 },//BL
-		{ 46, 38 }, //DB
-		{ 44, 30 }, //DR
-		{ 4, 25 }, //UR
-		{ 3, 9 }, //UL
 		{ 43, 14 }, //DL
+
+		
 	};
 
 	static constexpr unsigned char availableMoves[7][18] = {
