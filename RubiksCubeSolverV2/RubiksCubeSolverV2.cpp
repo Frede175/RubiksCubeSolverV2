@@ -13,6 +13,11 @@
 #include <thread>    
 //https://www.youtube.com/watch?v=7SM5OD2pZKY c++ opencv instalation
 
+
+
+
+
+
 int main()
 {
 
@@ -71,7 +76,21 @@ int main()
 	free(table);
 
 	*/
-	
+
+
+
+	unsigned char * phase1_corner_table = NEW_PHASE1_CORNER_TABLE;
+	unsigned char * phase1_edge_table = NEW_PHASE1_EDGE_TABLE;
+	unsigned char * phase1_UDSlice_table = NEW_PHASE1_UDSLICE_TABLE;
+	unsigned char * phase1_FlipUDSlice_table = NEW_PHASE1_FLIPUDSLICE_TABLE;
+	unsigned char * phase2_corner_table = NEW_PHASE2_CORNER_TABLE;
+	unsigned char * phase2_edge_table = NEW_PHASE2_EDGE_TABLE;
+	unsigned char * phase2_UDSlice_table = NEW_PHASE2_UDSLICE_TABLE;
+
+	//generateTables(phase1_corner_table, phase1_edge_table, phase1_UDSlice_table, phase1_FlipUDSlice_table, phase2_corner_table, phase2_edge_table, phase2_UDSlice_table);
+	loadTables(phase1_corner_table, phase1_edge_table, phase1_UDSlice_table, phase1_FlipUDSlice_table, phase2_corner_table, phase2_edge_table, phase2_UDSlice_table);
+
+	/*
 	unsigned char * edge1_table;
 	edge1_table = NEW_EGDE_TABLE;
 	unsigned char * edge2_table;
@@ -80,7 +99,11 @@ int main()
 	unsigned char * corner_table;
 	corner_table = NEW_CORNER_TABLE;
 	
-	/*
+	
+	
+	
+	
+	
 	FILE * file = fopen("edge1_table.txt", "r+");
 	int bytes_read = fread(edge1_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
@@ -93,12 +116,16 @@ int main()
 
 
 
-
+	*/
+	
 	Cube cube(solvedCube_T);
-
 	cube.doMove(16);
 	cube.doMove(10);
 	cube.doMove(14);
+	
+
+
+	
 	cube.doMove(17);
 	cube.doMove(7);
 	cube.doMove(17);
@@ -109,6 +136,7 @@ int main()
 	cube.doMove(1);
 	cube.doMove(17);
 	cube.doMove(8);
+	
 	cube.doMove(12);
 	cube.doMove(8);
 	cube.doMove(16);
@@ -121,29 +149,31 @@ int main()
 	cube.doMove(17);
 	cube.doMove(12);
 	cube.doMove(10);
+	
 
-
-	int	heuristic = corner_table[cube.getCornerIndex()];
-	int temp = edge1_table[cube.getEdgeIndex(0)];
-	if (heuristic < temp) heuristic = temp;
-	temp = edge2_table[cube.getEdgeIndex(1)];
-	if (heuristic < temp) heuristic = temp;
-	std::cout << "Heuristic: " << heuristic << "\n";
+	bool solvable = cube.isSolvable();
+	if (solvable) {
+		std::cout << "Cube is solvable! \n";
+	} else {
+		std::cout << "Cube is not solvable! \n";
+	}
 
 	
-	Solver solver(edge1_table, edge2_table, corner_table);
-	unsigned char * solution = solver.SolveCube(cube);
 
+	
+	//Solver solver(edge1_table, edge2_table, corner_table);
+	Solver solver(phase1_corner_table, phase1_edge_table, phase1_UDSlice_table, phase1_FlipUDSlice_table, phase2_corner_table, phase2_edge_table, phase2_UDSlice_table);
+	unsigned char * solution = solver.SolveCube(cube);
+	//unsigned char * solution = solver.manualSolve(cube);
 	if (solution != nullptr) {
-		for (int i = 0; i < 32; i++) {
-			if (solution[i] != 255) {
-				std::cout << unsigned(solution[i]) << " ";
-			}
+		int length = solution[0];
+		for (int i = 1; i < length + 1; i++) {
+			std::cout << unsigned(solution[i]) << " ";
 		}
 	}
 	
+	std::cout << "DOne";
 	
-	*/
 
 	/*
 	int index1 = 0, index2 = 0;
@@ -180,17 +210,19 @@ int main()
 	free(edge1_table);
 
 	std::cout << "DOne";
-	*/
 	
+	
+
 	GenerateTables(edge2_table, EDGE_TABLE_SIZE, 2);
-	FILE * file = fopen("edge2_table.txt", "w+");
-	int bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
+	file = fopen("edge2_table.txt", "w+");
+	bytes_written = fwrite(edge2_table, sizeof(unsigned char), EDGE_TABLE_SIZE, file);
 	fclose(file);
 	free(edge2_table);
 
 	std::cout << "Done";
-	
-	/*file = fopen("outputCorner.txt", "w+");
+	*/
+	/*
+	file = fopen("outputCorner.txt", "w+");
 	bytes_written = fwrite(cornerTable, sizeof(unsigned char), CORNER_TABLE_SIZE, file);
 	fclose(file);
 	free(cornerTable);*/
@@ -234,4 +266,7 @@ int main()
 	*/
 	
 }
+
+
+
 

@@ -222,6 +222,70 @@ bool Cube::isSolved() {
 	return true;
 }
 
+bool Cube::isSolvable() {
+
+	//Must be even permutation
+	int sum = 0;
+	unsigned char arr[12] = { 0,1,2,3,4,5,6,7,8,9,10,11 };
+	unsigned char arrC[8] = { 0,1,2,3,4,5,6,7 };
+	for (int i = 0; i < 12; i++) {
+		int num = getEdgePos(i);
+		int pos = 0;
+		while (num != arr[pos]) pos++;
+
+		sum += pos;
+		for (int j = pos; j < 12 - 1 - i; j++) {
+			arr[j] = arr[j + 1];
+		}
+	}
+
+	for (int i = 0; i < 8; i++) {
+		int num = getCornerPos(i);
+		int pos = 0;
+		while (num != arrC[pos]) pos++;
+
+		sum += pos;
+		for (int j = pos; j < 8 - 1 - i; j++) {
+			arrC[j] = arrC[j + 1];
+		}
+	}
+	if (sum % 2 != 0) {
+		std::cout << "Permutation is wrong! Sum: " << sum << "\n";
+		return false;
+	}
+
+	sum = 0;
+	unsigned char or [12];
+	for (int i = 0; i < 12; i++) {
+		if (cube[edgeIndexs[i][0]] == RubikColor_T::RED || cube[edgeIndexs[i][0]] == RubikColor_T::ORANGE ||
+			((cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) &&
+			(cube[edgeIndexs[i][1]] == RubikColor_T::BLUE || cube[edgeIndexs[i][1]] == RubikColor_T::GREEN)))
+			sum += 1; else sum += 0;
+	}
+	if (sum % 2 != 0) {
+		std::cout << "Edge OR is wrong! Sum: " << sum << "\n";
+		return false;
+	}
+
+	sum = 0;
+	for (int i = 0; i < 8; i++) {
+		for (int j = 0; j < 3; j++) {
+			if (cube[cornerIndexs[i][j]] == RubikColor_T::WHITE || cube[cornerIndexs[i][j]] == RubikColor_T::YELLOW) { //Changed ogange to yellow
+				sum += j;
+				break;
+			}
+		}
+	}
+	if (sum % 3 != 0) {
+		std::cout << "Corner OR is wrong! Sum: " << sum << "\n";
+		return false;
+	}
+
+
+
+	return true;
+}
+
 
 bool Cube::subgoal()
 {
@@ -323,6 +387,7 @@ int Cube::getEdgeIndex(int table)
 		int num = getEdgePos(i + 6 * table);
 		int pos = 0;
 		while (num != arr[pos]) pos++;
+		
 		iv[i] = pos;
 		for (int j = pos; j < 12 - 1 - i; j++) {
 			arr[j] = arr[j + 1];
@@ -401,6 +466,14 @@ int Cube::getEdgeIndex(int table)
 	return index;
 }
 
+unsigned char Cube::getPhase1Heuristic(unsigned char * cornerTable, unsigned char * edgeTable, unsigned char * UDSliceTable) {
+	return 0;
+}
+
+unsigned char Cube::getPhase2Heuristic(unsigned char * cornerTable, unsigned char * edgeTable, unsigned char * UDSliceTable) {
+	return 0;
+}
+
 
 
 const unsigned char * Cube::getAvailableMoves(unsigned char lastMove)  {
@@ -430,7 +503,7 @@ const unsigned char * Cube::getAvailableMoves(unsigned char lastMove)  {
 	case 16:
 	case 17:
 		return availableMoves[5];
-	default:
+	case 255:
 		return availableMoves[6];
 	}
 
@@ -474,6 +547,148 @@ bool Cube::endsOnCurrectMove(unsigned char lastMove)
 	return lastMove == 255;
 }
 
+int Cube::getPhase1CornerIndex() {
+
+	int index = 0;
+	int or = 0;
+	for (int i = 0; i < 7; i++) {
+		or = 0;
+		for (int j = 0; j < 3; j++) {
+			if (cube[cornerIndexs[i][j]] == RubikColor_T::WHITE || cube[cornerIndexs[i][j]] == RubikColor_T::YELLOW) { //Changed ogange to yellow
+				or = j;
+				break;
+			}
+		}
+		index = 3 * index + or ;
+	}
+	return index;
+}
+
+int Cube::getPhase1EdgeIndex() {
+	int index = 0, or ;
+	for (int i = 0; i < 11; i++) {
+		if (cube[edgeIndexs[i][0]] == RubikColor_T::RED || cube[edgeIndexs[i][0]] == RubikColor_T::ORANGE ||
+			((cube[edgeIndexs[i][0]] == RubikColor_T::WHITE || cube[edgeIndexs[i][0]] == RubikColor_T::YELLOW) &&
+			(cube[edgeIndexs[i][1]] == RubikColor_T::BLUE || cube[edgeIndexs[i][1]] == RubikColor_T::GREEN))) {
+			or = 1;
+		} else {
+			or = 0;
+		}
+		index = index * 2 + or ;
+	}
+	return index;
+}
+
+int Cube::getPhase1UDSliceIndex() {
+	bool occupied[12];
+
+	for (int i = 0; i < 12; i++) occupied[i] = false;
+	for (int i = 0; i < 12; i++) if (getEdgePos(i) >= 8) occupied[i] = true;
+	
+	int k = 3, index = 0, n = 11;
+	while (k >= 0) {
+		if (occupied[n]) k--;
+		else index = index + Helper::C(n, k);
+		n--;
+	}
+	return index;
+}
+
+int Cube::getPhase1FlipUDSliceIndex() {
+
+	int edge = getPhase1EdgeIndex();
+	int ud = getPhase1UDSliceIndex();
+
+	if (ud >= 495) {
+		std::cout << "Error in ud: " << ud << "\n";
+		return 0;
+	}
+		
+
+	if (edge >= 2048) {
+		std::cout << "Error in edge: " << edge << "\n";
+		return 0;
+	}
+		
+
+	return edge * 495 + ud;
+}
+
+int Cube::getPhase2CornerIndex() {
+	unsigned char pm[8] = { 0,0,0,0,0,0,0,0 };
+
+	for (int i = 0; i < 8; i++) {
+		pm[i] = getCornerPos(i);
+	}
+
+
+	int tp = 0;
+	for (int i = 0; i < 8 - 1; i++) {
+		tp *= (8 - i);
+		for (int j = i + 1; j < 8; j++) {
+			if (pm[i] > pm[j]) tp++;
+		}
+	}
+	return tp;
+}
+
+int Cube::getPhase2EdgeIndex() {
+	/*
+	int i, j, index = 0, s;
+
+	for (i = 8; i > 0; i--) {
+		s = 0;
+		for (j = i - 1; j >= 0; j--) {
+			if (getEdgePos(j) > getEdgePos(i)) s++;
+		}
+		index = (index + s)*i;
+	}
+	return index;
+	*/
+
+	unsigned char pm[8] = { 0,0,0,0,0,0,0,0 };
+
+	for (int i = 0; i < 8; i++) {
+		pm[i] = getEdgePos(i);
+	}
+
+
+	int tp = 0;
+	for (int i = 0; i < 8 - 1; i++) {
+		tp *= (8 - i);
+		for (int j = i + 1; j < 8; j++) {
+			if (pm[i] > pm[j]) tp++;
+		}
+	}
+	return tp;
+}
+
+int Cube::getPhase2UDSliceIndex() {
+
+	int j = 0, k, s, x = 0, e;
+	unsigned char arr[4] = {0,0,0,0};
+
+
+	for (int i = 0; i < 12; i++) {
+		e = getEdgePos(i);
+		if (e >= 8) {
+			arr[j] = e;
+			j++;
+		}
+	}
+
+	for (j = 3; j >= 1; j--) {
+		s = 0;
+		for (k = j - 1; k >= 0; k--) {
+			if (arr[k] > arr[j]) s++;
+		}
+		x = (x + s)*j;
+	}
+	return x;
+}
+
+
+
 unsigned char Cube::getCornerPos(unsigned char index)
 {
 
@@ -508,7 +723,7 @@ unsigned char Cube::getCornerPos(unsigned char index)
 
 unsigned char Cube::getEdgePos(unsigned char index)
 {
-
+	/*
 	if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
 		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 0;
 	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
@@ -517,22 +732,52 @@ unsigned char Cube::getEdgePos(unsigned char index)
 		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 2;
 	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
 		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 3;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 4;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 5;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 6;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 7;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::RED || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::RED || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 8;
-	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 9;
 	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
-		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 10;
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 4;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::RED || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::RED || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 5;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 6;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 7;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 8;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 9;
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 10;
 	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::GREEN || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
 		(cube[edgeIndexs[index][1]] == RubikColor_T::GREEN || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 11;
+	*/
+
+	if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 0; //UR
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 1; //UF
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::BLUE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::BLUE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 2; //UL
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::BLUE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::BLUE)) return 3; //UB
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::RED || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::RED || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 4; //DR
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 5; //DF
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::GREEN || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::GREEN || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 6; //DL
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::GREEN) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::GREEN)) return 7; //DB
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 8; //FR
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::WHITE || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::WHITE || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 9; //FL
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::ORANGE) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::ORANGE)) return 10; //BL
+	else if ((cube[edgeIndexs[index][0]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][0]] == RubikColor_T::RED) &&
+		(cube[edgeIndexs[index][1]] == RubikColor_T::YELLOW || cube[edgeIndexs[index][1]] == RubikColor_T::RED)) return 11; //BR
+	
+	
+	
+	
 
 	return -1;
 }

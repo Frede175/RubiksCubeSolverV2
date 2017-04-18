@@ -1,6 +1,9 @@
-﻿  RubiksCubeSolverV2.cpp
-c:\users\fsr19\documents\programming\rubikscubesolverv2\rubikscubesolverv2\rubikscubesolverv2.cpp(187): warning C4267: 'initializing': conversion from 'size_t' to 'int', possible loss of data
-c:\users\fsr19\documents\programming\rubikscubesolverv2\rubikscubesolverv2\rubikscubesolverv2.cpp(186): warning C4996: 'fopen': This function or variable may be unsafe. Consider using fopen_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
-  c:\program files (x86)\windows kits\10\include\10.0.14393.0\ucrt\stdio.h(207): note: see declaration of 'fopen'
-  RubiksCubeSolverV2.vcxproj -> C:\Users\fsr19\Documents\Programming\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.exe
-  RubiksCubeSolverV2.vcxproj -> C:\Users\fsr19\Documents\Programming\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.pdb (Partial PDB)
+﻿  Solver.cpp
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.h(11): warning C4010: single-line comment contains line-continuation character
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.h(12): warning C4010: single-line comment contains line-continuation character
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(99): warning C4101: 'index': unreferenced local variable
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(99): warning C4101: 'temp': unreferenced local variable
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(143): warning C4172: returning address of local variable or temporary: solution
+d:\programming\projects\rubikscubesolverv2\rubikscubesolverv2\solver.cpp(79): warning C4172: returning address of local variable or temporary: solution
+  RubiksCubeSolverV2.vcxproj -> D:\Programming\Projects\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.exe
+  RubiksCubeSolverV2.vcxproj -> D:\Programming\Projects\RubiksCubeSolverV2\x64\Debug\RubiksCubeSolverV2.pdb (Partial PDB)

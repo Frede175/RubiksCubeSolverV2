@@ -27,6 +27,7 @@ public:
 
 	void doMove(unsigned char move);
 	bool isSolved();
+	bool isSolvable();
 
 	/*
 	 *	Is reached if:
@@ -60,7 +61,8 @@ public:
 
 
 	
-
+	unsigned char getPhase1Heuristic(unsigned char * cornerTable, unsigned char * edgeTable, unsigned char * UDSliceTable);
+	unsigned char getPhase2Heuristic(unsigned char * cornerTable, unsigned char * edgeTable, unsigned char * UDSliceTable);
 
 
 	/*
@@ -72,18 +74,31 @@ public:
 	bool endsOnCurrectMove(unsigned char lastMove);
 
 
+	//Only public because it is needed to generate tables!
+	int getPhase1CornerIndex();
+	int getPhase1EdgeIndex();
+	int getPhase1UDSliceIndex();
+	int getPhase1FlipUDSliceIndex();
+
+	int getPhase2CornerIndex();
+	int getPhase2EdgeIndex();
+	int getPhase2UDSliceIndex();
+
 private:
+
+	
+
 	unsigned char getCornerPos(unsigned char index);
 	unsigned char getEdgePos(unsigned char index);
 
 	static constexpr unsigned char cornerIndexs[8][3] = {
-		{ 16, 10, 5 }, //UFL
+		{ 16, 5, 10 }, //UFL
 		{ 18, 24, 7 }, //UFR
 		{ 34, 8, 0 }, //UBL
-		{ 32, 26, 2 }, //UBR
+		{ 32, 2, 26 }, //UBR
 		{ 21, 15, 40 }, //DFL
-		{ 23, 29, 42 }, //DFR
-		{ 39, 13, 45 }, //DBL
+		{ 23, 42, 29 }, //DFR
+		{ 39, 45, 13 }, //DBL
 		{ 37, 31, 47 } //DBR
 	};
 
@@ -103,27 +118,38 @@ private:
 			 45  46  47
 	*/
 
-
-
 	//Front/back first. if not front/back then top/down first
 	static constexpr unsigned char edgeIndexs[12][2] = {
-		{ 36, 11 },//BL
-		{ 46, 38 }, //DB
-		{ 44, 30 }, //DR
-		{ 4, 25 }, //UR
-		{ 3, 9 }, //UL
-		
-
-
-
+	
+		/*
 		{ 6, 17 }, //UF
 		{ 19, 12 }, //FL
 		{ 41, 22 }, //DF
 		{ 20, 27 }, //FR
+		{ 3, 9 }, //UL
+		{ 44, 30 }, //DR
+
+		{ 1, 33 }, //UB 
+		{ 36, 11 },//BL
+		{ 46, 38 }, //DB
 		{ 35, 28 },//BR
-		{ 1, 33 }, //UB  
+		{ 4, 25 }, //UR
 		{ 43, 14 }, //DL
 
+		*/
+
+		{ 4, 25 }, //UR
+		{ 6, 17 }, //UF
+		{ 3, 9 }, //UL
+		{ 1, 33 }, //UB 
+		{ 44, 30 }, //DR
+		{ 41, 22 }, //DF
+		{ 43, 14 }, //DL
+		{ 46, 38 }, //DB
+		{ 20, 27 }, //FR
+		{ 19, 12 }, //FL
+		{ 36, 11 },//BL
+		{ 35, 28 },//BR
 		
 	};
 

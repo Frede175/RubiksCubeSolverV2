@@ -26,8 +26,12 @@ const unsigned char solvedCube_T[48] = {
 
 
 namespace Helper {
-	
+	int factorial(int x, int result = 1);
+
+	int C(int n, int k);
 };
+
+
 
 
 #endif // !Helper_T
